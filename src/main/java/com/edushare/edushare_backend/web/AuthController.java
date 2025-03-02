@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.edushare.edushare_backend.entities.Professor;
+import com.edushare.edushare_backend.entities.Student;
+import com.edushare.edushare_backend.enums.Role;
+import com.edushare.edushare_backend.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,12 +26,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @CrossOrigin("*")
 public class AuthController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtEncoder jwtEncoder;
 
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    private AuthenticationManager authenticationManager;
+    private JwtEncoder jwtEncoder;
+    private UserService userService;
+
+    public AuthController(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder, UserService userService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtEncoder = jwtEncoder;
+        this.userService = userService;
+    }
+
+    @PreAuthorize("hasAuthority('SCOPE_PROFESSOR')")
     @GetMapping("/roles")
     public ResponseEntity<List<String>> getRoles(){
          List<String> roles = new ArrayList<>();
@@ -69,5 +78,17 @@ public class AuthController {
         String jwt= jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
 
         return Map.of("access-token",jwt);
+    }
+
+    @PostMapping("/register/professor")
+    public Professor registerProfessor(@RequestBody Professor professor) {
+        professor.setRole(Role.PROFESSOR); // Assign PROFESSOR role
+        return (Professor) userService.registerUser(professor);
+    }
+
+    @PostMapping("/register/student")
+    public Student registerStudent(@RequestBody Student student) {
+        student.setRole(Role.STUDENT); // Assign STUDENT role
+        return (Student) userService.registerUser(student);
     }
 }

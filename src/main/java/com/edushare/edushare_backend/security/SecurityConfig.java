@@ -1,6 +1,7 @@
 package com.edushare.edushare_backend.security;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,18 +37,21 @@ import java.util.List;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Bean
-    public InMemoryUserDetailsManager inMemoryUserDetailsManager(){
-        PasswordEncoder passwordEncoder=passwordEncoder();
-        return new InMemoryUserDetailsManager(
-            User.withUsername("user1").password(passwordEncoder.encode("1234")).authorities("USER").build(),
-            User.withUsername("user2").password(passwordEncoder.encode("1234")).authorities("USER","ADMIN").build()
-
-        );
-    }
+//    @Bean
+//    public InMemoryUserDetailsManager inMemoryUserDetailsManager(){
+//        PasswordEncoder passwordEncoder=passwordEncoder();
+//        return new InMemoryUserDetailsManager(
+//            User.withUsername("user1").password(passwordEncoder.encode("1234")).authorities("USER").build(),
+//            User.withUsername("user2").password(passwordEncoder.encode("1234")).authorities("USER","ADMIN").build()
+//
+//        );
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -60,7 +64,7 @@ public class SecurityConfig {
         .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .csrf(csrf->csrf.disable())
         .cors(Customizer.withDefaults())
-        .authorizeHttpRequests(ar-> ar.requestMatchers("/auth/login/**").permitAll())
+        .authorizeHttpRequests(ar-> ar.requestMatchers("/auth/login/**","/auth/register/**").permitAll())
         .authorizeHttpRequests(ar->ar.anyRequest().authenticated())
 //      .httpBasic(Customizer.withDefaults())
         .oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
@@ -79,7 +83,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(UserDetailsService userDetailsService){
+    AuthenticationManager authenticationManager(){
         DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
@@ -97,4 +101,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
+
+
 }
