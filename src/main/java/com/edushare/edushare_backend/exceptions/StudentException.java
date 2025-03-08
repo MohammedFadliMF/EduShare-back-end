@@ -1,7 +1,7 @@
 package com.edushare.edushare_backend.exceptions;
 
-public class CourseException extends Exception{
-    public CourseException(String message){
+public class StudentException extends Exception{
+    public StudentException(String message){
         super(message);
     }
 }
