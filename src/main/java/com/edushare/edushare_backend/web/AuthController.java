@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.edushare.edushare_backend.entities.Professor;
+import com.edushare.edushare_backend.entities.Teacher;
 import com.edushare.edushare_backend.entities.Student;
 import com.edushare.edushare_backend.enums.Role;
 import com.edushare.edushare_backend.services.UserService;
@@ -35,16 +35,6 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.jwtEncoder = jwtEncoder;
         this.userService = userService;
-    }
-
-    @PreAuthorize("hasAuthority('SCOPE_PROFESSOR')")
-    @GetMapping("/roles")
-    public ResponseEntity<List<String>> getRoles(){
-         List<String> roles = new ArrayList<>();
-         roles.add("Admin");
-         roles.add("User");
-         roles.add("Moderator");
-        return new ResponseEntity<List<String>>(roles,HttpStatus.OK);
     }
 
   @GetMapping("/profile")
@@ -80,10 +70,10 @@ public class AuthController {
         return Map.of("access-token",jwt);
     }
 
-    @PostMapping("/register/professor")
-    public Professor registerProfessor(@RequestBody Professor professor) {
-        professor.setRole(Role.PROFESSOR); // Assign PROFESSOR role
-        return (Professor) userService.registerUser(professor);
+    @PostMapping("/register/teacher")
+    public Teacher registerProfessor(@RequestBody Teacher teacher) {
+        teacher.setRole(Role.TEACHER); // Assign TEACHER role
+        return (Teacher) userService.registerUser(teacher);
     }
 
     @PostMapping("/register/student")
