@@ -2,7 +2,6 @@ package com.edushare.edushare_backend.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.edushare.edushare_backend.enums.Role;
 import jakarta.persistence.CascadeType;
@@ -16,9 +15,9 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class Professor extends User{
+public class Teacher extends User{
 
-   @OneToMany(mappedBy = "professor",cascade = CascadeType.ALL)
+   @OneToMany(mappedBy = "teacher",cascade = CascadeType.ALL)
    private List<Course> createdCourses=new ArrayList<>();
 
    @Override
