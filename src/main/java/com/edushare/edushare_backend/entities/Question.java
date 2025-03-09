@@ -10,7 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 
-@Builder
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

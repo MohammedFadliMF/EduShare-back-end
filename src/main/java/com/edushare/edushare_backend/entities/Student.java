@@ -1,24 +1,28 @@
 package com.edushare.edushare_backend.entities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.edushare.edushare_backend.enums.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 @Builder
 public class Student extends User{
 
     @ManyToMany
-    private List<Course> enrolledCourses=new ArrayList<>();
+    private Set<Course> enrolledCourses=new HashSet<>();
+
+    @OneToMany
+    private  Set<QuizAttempt> quizAttempts =new HashSet<>();
+
     @Override
     public String getUsername() {
         return super.getUsername();
@@ -57,5 +61,21 @@ public class Student extends User{
     @Override
     public void setRole(Role role) {
         super.setRole(role);
+    }
+
+    public Set<Course> getEnrolledCourses() {
+        return enrolledCourses;
+    }
+
+    public void setEnrolledCourses(Set<Course> enrolledCourses) {
+        this.enrolledCourses = enrolledCourses;
+    }
+
+    public Set<QuizAttempt> getQuizAttempts() {
+        return quizAttempts;
+    }
+
+    public void setQuizAttempts(Set<QuizAttempt> quizAttempts) {
+        this.quizAttempts = quizAttempts;
     }
 }
