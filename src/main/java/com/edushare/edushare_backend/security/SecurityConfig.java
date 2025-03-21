@@ -24,6 +24,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -67,7 +68,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(ar-> ar.requestMatchers("/auth/login/**","/auth/register/**","/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**").permitAll())
         .authorizeHttpRequests(ar->ar.anyRequest().authenticated())
 //      .httpBasic(Customizer.withDefaults())
-        .oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
+//      .oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults())
+        .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // 🔹 Register custom filter
         .build();
     }
 
@@ -100,6 +102,11 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtDecoder());
     }
 
 
